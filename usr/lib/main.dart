@@ -13,8 +13,46 @@ class IntelliSheetApp extends StatelessWidget {
       title: 'IntelliSheet: AI Cheat Sheet Generator',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        brightness: Brightness.dark,
+        primaryColor: Colors.deepPurple,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1F1F1F),
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.deepPurple),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepPurple,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
       home: const HomeScreen(),
     );
@@ -31,17 +69,20 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _topicController = TextEditingController();
   String _selectedCategory = 'Programming';
-  final List<String> _categories = ['Programming', 'Math', 'Science', 'History', 'Languages'];
+  final List<String> _categories = ['Programming', 'Math', 'Science', 'History', 'Languages', 'General Knowledge'];
 
   void _generateCheatSheet() {
-    if (_topicController.text.isEmpty) {
+    if (_topicController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a topic')),
+        const SnackBar(
+          content: Text('Please enter a topic to generate a cheat sheet.'),
+          backgroundColor: Colors.redAccent,
+        ),
       );
       return;
     }
 
-    // Mock cheat sheet generation (replace with real AI integration later)
+    // Mock cheat sheet generation
     final mockCheatSheet = _generateMockCheatSheet(_topicController.text, _selectedCategory);
 
     Navigator.push(
@@ -57,21 +98,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Map<String, dynamic> _generateMockCheatSheet(String topic, String category) {
-    // Mock data - in a real app, this would call an AI service
     return {
       'title': '$topic Cheat Sheet',
       'sections': [
         {
-          'heading': 'Key Concepts',
-          'content': '• Concept 1: Brief explanation\n• Concept 2: Brief explanation\n• Concept 3: Brief explanation',
+          'heading': 'Key Concepts & Definitions',
+          'content': '• Concept A: A detailed explanation of the first key concept.\n• Concept B: A detailed explanation of the second key concept.\n• Concept C: A detailed explanation of the third key concept.',
         },
         {
-          'heading': 'Important Formulas/Syntax',
-          'content': '• Formula 1: Example\n• Formula 2: Example',
+          'heading': 'Core Formulas / Syntax',
+          'content': '• Formula/Syntax 1: Description and example usage.\n• Formula/Syntax 2: Description and example usage.',
         },
         {
-          'heading': 'Tips & Tricks',
-          'content': '• Tip 1: Useful advice\n• Tip 2: Helpful hint',
+          'heading': 'Practical Examples',
+          'content': '• Example 1: A step-by-step example demonstrating a key concept.\n• Example 2: Another practical example to solidify understanding.',
+        },
+        {
+          'heading': 'Common Mistakes & Tips',
+          'content': '• Mistake 1: A common pitfall to avoid.\n• Tip 1: A useful trick or best practice to remember.',
         },
       ],
     };
@@ -84,52 +128,62 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('IntelliSheet Generator'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Generate Your AI Cheat Sheet',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _topicController,
-              decoration: const InputDecoration(
-                labelText: 'Enter Topic (e.g., Python Functions)',
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(Icons.auto_awesome, size: 60, color: Colors.deepPurple),
+              const SizedBox(height: 16),
+              const Text(
+                'Create Your AI-Powered Cheat Sheet',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              decoration: const InputDecoration(
-                labelText: 'Select Category',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 8),
+              Text(
+                'Enter a topic and select a category to instantly generate a concise summary.',
+                style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                textAlign: TextAlign.center,
               ),
-              items: _categories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedCategory = value!;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _generateCheatSheet,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+              const SizedBox(height: 32),
+              TextField(
+                controller: _topicController,
+                decoration: const InputDecoration(
+                  labelText: 'Enter Topic (e.g., "Python Dictionaries")',
+                  prefixIcon: Icon(Icons.topic),
+                ),
               ),
-              child: const Text('Generate Cheat Sheet'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Select Category',
+                  prefixIcon: Icon(Icons.category),
+                ),
+                items: _categories.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: _generateCheatSheet,
+                icon: const Icon(Icons.bolt),
+                label: const Text('Generate Cheat Sheet'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -156,54 +210,66 @@ class CheatSheetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sections = cheatSheet['sections'] as List;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('$topic Cheat Sheet'),
+        title: Text(cheatSheet['title']),
         centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              cheatSheet['title'],
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Category: $category',
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 20),
-            ...(cheatSheet['sections'] as List).map((section) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      section['heading'],
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      section['content'],
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Sharing functionality coming soon!')),
               );
-            }),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Generate Another'),
+            },
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: sections.length,
+        itemBuilder: (context, index) {
+          final section = sections[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    section['heading'],
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    section['content'],
+                    style: TextStyle(
+                      fontSize: 16,
+                      height: 1.5,
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pop(context),
+        tooltip: 'Generate Another',
+        child: const Icon(Icons.add),
       ),
     );
   }
